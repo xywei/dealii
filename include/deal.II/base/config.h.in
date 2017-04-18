@@ -117,6 +117,7 @@
 #cmakedefine DEAL_II_HAVE_ISFINITE
 #cmakedefine DEAL_II_HAVE_FP_EXCEPTIONS
 #cmakedefine DEAL_II_HAVE_COMPLEX_OPERATOR_OVERLOADS
+#cmakedefine DEAL_II_FALLTHROUGH @DEAL_II_FALLTHROUGH@
 
 
 /***********************************************************************
@@ -156,6 +157,9 @@
  * Depending on the use of threads, we will have to make some variables
  * volatile. We do this here in a very old-fashioned C-style, but still
  * convenient way.
+ *
+ * @deprecated This macro is deprecated in favor of using the
+ * <code>std::atomic</code> template class.
  */
 #ifdef DEAL_II_WITH_THREADS
 #  define DEAL_VOLATILE volatile

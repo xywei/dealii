@@ -24,6 +24,7 @@
 #include <deal.II/base/template_constraints.h>
 
 #include <deal.II/lac/vector.h>
+#include <deal.II/lac/vector_element_access.h>
 
 #include <vector>
 #include <set>
@@ -1451,7 +1452,7 @@ ConstraintMatrix::add_line (const size_type line)
                         numbers::invalid_size_type);
 
   // push a new line to the end of the list
-  lines.push_back (ConstraintLine());
+  lines.emplace_back ();
   lines.back().line = line;
   lines.back().inhomogeneity = 0.;
   lines_cache[line_index] = lines.size()-1;
@@ -1497,7 +1498,7 @@ ConstraintMatrix::add_entry (const size_type line,
         return;
       }
 
-  line_ptr->entries.push_back (std::make_pair(column,value));
+  line_ptr->entries.emplace_back (column, value);
 }
 
 
@@ -1658,14 +1659,16 @@ void ConstraintMatrix::distribute_local_to_global (
         ++local_vector_begin, ++local_indices_begin)
     {
       if (is_constrained(*local_indices_begin) == false)
-        global_vector(*local_indices_begin) += *local_vector_begin;
+        internal::ElementAccess<VectorType>::add(*local_vector_begin,
+                                                 *local_indices_begin, global_vector);
       else
         {
           const ConstraintLine &position =
             lines[lines_cache[calculate_line_index(*local_indices_begin)]];
           for (size_type j=0; j<position.entries.size(); ++j)
-            global_vector(position.entries[j].first)
-            += *local_vector_begin * position.entries[j].second;
+            internal::ElementAccess<VectorType>::add(*local_vector_begin *
+                                                     position.entries[j].second, position.entries[j].first,
+                                                     global_vector);
         }
     }
 }

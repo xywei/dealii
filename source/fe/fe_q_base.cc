@@ -177,7 +177,7 @@ struct FE_Q_Base<PolynomialType,xdim,xspacedim>::Implementation
     // 0 and on subface 1
     std::vector<Point<dim-1> > constraint_points;
     // Add midpoint
-    constraint_points.push_back (Point<dim-1> (0.5));
+    constraint_points.emplace_back(0.5);
 
     if (q_deg>1)
       {
@@ -256,13 +256,13 @@ struct FE_Q_Base<PolynomialType,xdim,xspacedim>::Implementation
     std::vector<Point<dim-1> > constraint_points;
 
     // Add midpoint
-    constraint_points.push_back (Point<dim-1> (0.5, 0.5));
+    constraint_points.emplace_back(0.5, 0.5);
 
     // Add midpoints of lines of "mother-face"
-    constraint_points.push_back (Point<dim-1> (0, 0.5));
-    constraint_points.push_back (Point<dim-1> (1, 0.5));
-    constraint_points.push_back (Point<dim-1> (0.5, 0));
-    constraint_points.push_back (Point<dim-1> (0.5, 1));
+    constraint_points.emplace_back(0, 0.5);
+    constraint_points.emplace_back(1, 0.5);
+    constraint_points.emplace_back(0.5, 0);
+    constraint_points.emplace_back(0.5, 1);
 
     if (q_deg>1)
       {
@@ -752,7 +752,7 @@ hp_line_dof_identities (const FiniteElement<dim,spacedim> &fe_other) const
           if (std::fabs(this->unit_support_points[index_map_inverse[i+1]][0]-
                         fe_q_other->unit_support_points[index_map_inverse_other[j+1]][0])
               < 1e-14)
-            identities.push_back (std::make_pair(i,j));
+            identities.emplace_back (i, j);
 
       return identities;
     }
@@ -818,8 +818,7 @@ hp_quad_dof_identities (const FiniteElement<dim,spacedim>        &fe_other) cons
                   (std::fabs(this->unit_support_points[index_map_inverse[i2+1]][0]-
                              fe_q_other->unit_support_points[index_map_inverse_other[j2+1]][0])
                    < 1e-14))
-                identities.push_back (std::make_pair(i1*(p-1)+i2,
-                                                     j1*(q-1)+j2));
+                identities.emplace_back (i1*(p-1)+i2, j1*(q-1)+j2);
 
       return identities;
     }

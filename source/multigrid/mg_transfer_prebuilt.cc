@@ -23,6 +23,7 @@
 #include <deal.II/lac/la_parallel_block_vector.h>
 #include <deal.II/lac/petsc_vector.h>
 #include <deal.II/lac/petsc_block_vector.h>
+#include <deal.II/lac/trilinos_epetra_vector.h>
 #include <deal.II/lac/trilinos_vector.h>
 #include <deal.II/lac/trilinos_block_vector.h>
 #include <deal.II/lac/sparse_matrix.h>
@@ -149,13 +150,15 @@ void MGTransferPrebuilt<VectorType>::build_matrices
   // by itself
   prolongation_matrices.resize (0);
   prolongation_sparsities.resize (0);
+  prolongation_matrices.reserve (n_levels - 1);
+  prolongation_sparsities.reserve (n_levels - 1);
 
   for (unsigned int i=0; i<n_levels-1; ++i)
     {
-      prolongation_sparsities.push_back
-      (std::shared_ptr<typename internal::MatrixSelector<VectorType>::Sparsity> (new typename internal::MatrixSelector<VectorType>::Sparsity));
-      prolongation_matrices.push_back
-      (std::shared_ptr<typename internal::MatrixSelector<VectorType>::Matrix> (new typename internal::MatrixSelector<VectorType>::Matrix));
+      prolongation_sparsities.emplace_back
+      (new typename internal::MatrixSelector<VectorType>::Sparsity);
+      prolongation_matrices.emplace_back
+      (new typename internal::MatrixSelector<VectorType>::Matrix);
     }
 
   // two fields which will store the
